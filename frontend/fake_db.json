@@ -13,6 +13,13 @@
       "age": 50,
       "favoriteToy": "tigara",
       "category": "dog"
+    },
+    {
+      "id": "96",
+      "name": "pula",
+      "age": 1,
+      "favoriteToy": "asdfew",
+      "category": "dog"
     }
   ]
 }

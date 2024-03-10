@@ -5,6 +5,7 @@ import {
 import { AllPets } from "../components/pets/AllPets";
 import { Home } from "../components/Home";
 import { UpdatePet } from "../components/pets/UpdatePet";
+import { AddPet } from "../components/pets/AddPet";
 
 const routes = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const routes = createBrowserRouter([
   {
     path: '/pets/:id',
     Component: UpdatePet
+  },
+  {
+    path: '/pets/add',
+    Component: AddPet
   }
 ])
 

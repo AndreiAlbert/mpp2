@@ -21,35 +21,66 @@ interface PetProviderProps {
 export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   const [pets, setPets] = useState<PetType[]>([]);
 
+  const fetchPets = async () => {
+    try {
+      const response = await fetch(petUrl);
+      if (!response.ok) {
+        throw new Error("Could not fetch pets");
+      }
+      const data = await response.json() as PetType[];
+      setPets(data);
+    }
+    catch (error: unknown) {
+      console.error(`Error`);
+    }
+  };
+
   useEffect(() => {
-    const fetchPets = async () => {
-      try {
-        const response = await fetch(petUrl);
-        if (!response.ok) {
-          throw new Error("Could not fetch pets");
-        }
-        const data = await response.json() as PetType[];
-        setPets(data);
-      }
-      catch (error: unknown) {
-        console.error(`Error`);
-      }
-    };
     fetchPets();
   }, []);
+
+  const addPet = async (pet: PetType) => {
+    try {
+      const response = await fetch(petUrl, {
+        method: 'POST',
+        body: JSON.stringify(pet)
+      })
+      if (!response.ok) {
+        throw new Error('could not add pet');
+      }
+      await fetchPets();
+    } catch (error: unknown) {
+      console.log('error');
+    }
+  }
 
   const deletePet = async (id: string) => {
     console.log(`trying to delete pet ${id}`);
     try {
-      const response = await fetch(`${petUrl} / ${id}`, {
+      const response = await fetch(`${petUrl}/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
         throw new Error('could not delete pet');
       }
-      setPets(pets.filter(pet => pet.id !== id));
+      await fetchPets();
     } catch (err: unknown) {
       console.log(`error`);
+    }
+  }
+
+  const updateOnePet = async (pet: PetType) => {
+    try {
+      const response = await fetch(`${petUrl}/${pet.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(pet)
+      })
+      if (!response.ok) {
+        throw new Error('could not update one pet');
+      }
+      await fetchPets();
+    } catch (err: unknown) {
+      console.log('error');
     }
   }
 
@@ -67,7 +98,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   }
 
   return (
-    <PetContext.Provider value={{ pets, deletePet, getPetById }}>
+    <PetContext.Provider value={{ pets, deletePet, getPetById, addPet, updateOnePet }}>
       {children}
     </PetContext.Provider>
   );

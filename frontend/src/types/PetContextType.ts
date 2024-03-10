@@ -4,4 +4,6 @@ export type PetContextType = {
     pets: PetType[];
     deletePet: (id: string) => void;
     getPetById: (id: string) => Promise<PetType | undefined>;
+    addPet: (pet: PetType) => void;
+    updateOnePet: (pet: PetType) => void;
 }

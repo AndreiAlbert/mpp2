@@ -1,46 +1,44 @@
-import { useEffect, useState } from "react";
-import { usePets } from "../../contexts/PetContext"
-import { useNavigate, useParams } from "react-router-dom";
-import { PetType } from "../../types/PetType";
+import { useState } from "react";
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { PetType } from "../../types/PetType";
+import { usePets } from "../../contexts/PetContext";
+import { useNavigate } from "react-router-dom";
 
-export function UpdatePet() {
-    const { getPetById, updateOnePet } = usePets();
+export function AddPet() {
+    const { addPet } = usePets();
     const navigate = useNavigate();
-    const { id } = useParams();
-    const [pet, setPet] = useState<PetType | undefined>(undefined);
-
-    useEffect(() => {
-        const fetchPetDetails = async () => {
-            if (!id) {
-                return null;
-            }
-            const fetchedPet = await getPetById(id);
-            setPet(fetchedPet);
-        }
-        fetchPetDetails();
-    }, []);
+    const [pet, setPet] = useState<PetType>({
+        id: "",
+        name: "",
+        age: 0,
+        favoriteToy: "",
+        category: "cat",
+    });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!pet) {
-            return;
-        }
-        updateOnePet(pet);
+        pet.id = Math.floor(Math.random() * 100).toString(10);
+        console.log(pet);
+        addPet(pet);
         navigate('/pets');
-    }
+    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        setPet((prevPet) => (prevPet ? { ...prevPet, [name]: value } : prevPet));
+        setPet(prevPet => ({
+            ...prevPet,
+            [name]: name === "age" ? parseInt(value, 10) : value,
+        }));
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-        const { name, value } = event.target;
-        setPet((prevPet) => (prevPet ? { ...prevPet, [name]: value } : prevPet));
+    const handleSelectChange = (event: SelectChangeEvent<'cat' | 'dog'>) => {
+        const name = event.target.name as keyof typeof pet;
+        const value = event.target.value as string;
+        setPet(prevPet => ({
+            ...prevPet,
+            [name]: value,
+        }));
     };
-
-    if (!pet) return <div>Loading...</div>;
 
     return (
         <form onSubmit={handleSubmit}>
@@ -58,7 +56,7 @@ export function UpdatePet() {
                 label="Age"
                 name="age"
                 type="number"
-                value={String(pet.age)}
+                value={pet.age}
                 onChange={handleChange}
             />
             <TextField
@@ -82,7 +80,7 @@ export function UpdatePet() {
                 </Select>
             </FormControl>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                Update Pet
+                Add Pet
             </Button>
         </form>
     );
