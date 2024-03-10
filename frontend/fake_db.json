@@ -1,0 +1,18 @@
+{
+  "pets": [
+    {
+      "id": "3",
+      "name": "cristi",
+      "age": 22,
+      "favoriteToy": "tigara",
+      "category": "dog"
+    },
+    {
+      "id": "4",
+      "name": "marian",
+      "age": 50,
+      "favoriteToy": "tigara",
+      "category": "dog"
+    }
+  ]
+}
