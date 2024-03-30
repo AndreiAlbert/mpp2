@@ -1,7 +1,7 @@
 export type PetType = {
     id: string;
     name?: string;
-    age?: number;
+    age: number;
     favoriteToy?: string;
     category?: "cat" | "dog";
     // categoryId: string; will future entity probably

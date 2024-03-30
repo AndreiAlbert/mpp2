@@ -9,7 +9,7 @@ const petUrl = `${baseUrl}/pets`;
 export function usePets() {
   const context = useContext(PetContext);
   if (!context) {
-    throw new Error("shall be used withing pets provider. u dummy");
+    throw new Error("shall be used within pets provider. u dummy");
   }
   return context;
 }
@@ -103,3 +103,6 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
     </PetContext.Provider>
   );
 };
+
+
+
