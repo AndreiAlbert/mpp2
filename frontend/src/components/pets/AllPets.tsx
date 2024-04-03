@@ -95,7 +95,6 @@ export function AllPets() {
                     </Button>
                 ))}
             </div>
-
             <Button component={Link} to="/pets/add">Add</Button>
         </>
     );

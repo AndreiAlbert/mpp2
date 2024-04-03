@@ -3,7 +3,7 @@ import { PetContextType } from "../types/PetContextType";
 import { PetType } from "../types/PetType";
 import baseUrl from "../consts";
 
-const PetContext = createContext<PetContextType | undefined>(undefined);
+export const PetContext = createContext<PetContextType | undefined>(undefined);
 const petUrl = `${baseUrl}/pets`;
 
 export function usePets() {
@@ -14,7 +14,7 @@ export function usePets() {
   return context;
 }
 
-interface PetProviderProps {
+export interface PetProviderProps {
   children: ReactNode;
 }
 
