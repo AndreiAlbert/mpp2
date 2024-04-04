@@ -1,24 +1,22 @@
-import { useState } from "react";
 import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
-import { PetType } from "../../types/PetType";
+import { PetType } from "../../types/PetType"; // Assuming PetType is correctly defined elsewhere
 import { usePets } from "../../contexts/PetContext";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function AddPet() {
     const { addPet } = usePets();
     const navigate = useNavigate();
     const [pet, setPet] = useState<PetType>({
-        id: "",
         name: "",
         age: 0,
-        favoriteToy: "",
-        category: "cat",
+        favouriteToy: "",
+        category: 0
     });
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        pet.id = Math.floor(Math.random() * 100).toString(10);
-        console.log(pet);
+        console.log(JSON.stringify(pet));
         addPet(pet);
         navigate('/pets');
     };
@@ -31,12 +29,13 @@ export function AddPet() {
         }));
     };
 
-    const handleSelectChange = (event: SelectChangeEvent<'cat' | 'dog'>) => {
-        const name = event.target.name as keyof typeof pet;
-        const value = event.target.value as string;
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        const value = event.target.value;
+        // Convert the string value to the corresponding enum number
+        const categoryValue = value === "cat" ? 0 : 1;
         setPet(prevPet => ({
             ...prevPet,
-            [name]: value,
+            category: categoryValue,
         }));
     };
 
@@ -56,22 +55,22 @@ export function AddPet() {
                 label="Age"
                 name="age"
                 type="number"
-                value={pet.age}
+                value={String(pet.age)}
                 onChange={handleChange}
             />
             <TextField
                 margin="normal"
                 fullWidth
                 label="Favorite Toy"
-                name="favoriteToy"
-                value={pet.favoriteToy}
+                name="favouriteToy" // Make sure this matches your state's property name
+                value={pet.favouriteToy}
                 onChange={handleChange}
             />
             <FormControl fullWidth margin="normal">
                 <InputLabel>Category</InputLabel>
                 <Select
                     name="category"
-                    value={pet.category}
+                    value={pet.category === 0 ? "cat" : "dog"} // Display the correct string based on the enum value
                     label="Category"
                     onChange={handleSelectChange}
                 >

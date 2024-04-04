@@ -73,13 +73,13 @@ export function AllPets() {
                     </TableHead>
                     <TableBody>
                         {currentPets.map((pet) => (
-                            <TableRow key={pet.id}>
+                            <TableRow key={pet.id!!}>
                                 <TableCell>{pet.name}</TableCell>
                                 <TableCell>{pet.age}</TableCell>
-                                <TableCell>{pet.favoriteToy}</TableCell>
-                                <TableCell>{pet.category}</TableCell>
+                                <TableCell>{pet.favouriteToy}</TableCell>
+                                <TableCell>{pet.category == 0 ? "cat" : "dog"}</TableCell>
                                 <TableCell>
-                                    <Button color="error" onClick={() => handleDeletePet(pet.id)}>Delete</Button>
+                                    <Button color="error" onClick={() => handleDeletePet(pet.id!!)}>Delete</Button>
                                     <Button component={Link} to={`/pets/${pet.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>Update</Button>
                                 </TableCell>
                             </TableRow>

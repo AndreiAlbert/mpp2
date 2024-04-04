@@ -1,46 +1,43 @@
-import { useEffect, useState } from "react";
-import { usePets } from "../../contexts/PetContext"
+import React, { useEffect, useState } from "react";
+import { usePets } from "../../contexts/PetContext";
 import { useNavigate, useParams } from "react-router-dom";
-import { PetType } from "../../types/PetType";
-import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 
 export function UpdatePet() {
     const { getPetById, updateOnePet } = usePets();
     const navigate = useNavigate();
-    const { id } = useParams();
-    const [pet, setPet] = useState<PetType | undefined>(undefined);
+    const { id } = useParams<{ id: string }>();
+    const [name, setName] = useState('');
+    const [favouriteToy, setFavouriteToy] = useState('');
 
     useEffect(() => {
         const fetchPetDetails = async () => {
-            if (!id) {
-                return null;
-            }
+            if (!id) return;
             const fetchedPet = await getPetById(id);
-            setPet(fetchedPet);
-        }
+            if (fetchedPet) {
+                setName(fetchedPet.name || '');
+                setFavouriteToy(fetchedPet.favouriteToy || '');
+            }
+        };
         fetchPetDetails();
-    }, []);
+    }, [id, getPetById]);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (!pet) {
-            return;
-        }
-        updateOnePet(pet);
+        if (!id) return;
+        await updateOnePet({ name, favouriteToy }, id);
         navigate('/pets');
-    }
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setPet((prevPet) => (prevPet ? { ...prevPet, [name]: value } : prevPet));
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-        const { name, value } = event.target;
-        setPet((prevPet) => (prevPet ? { ...prevPet, [name]: value } : prevPet));
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setName(event.target.value);
     };
 
-    if (!pet) return <div>Loading...</div>;
+    const handleFavouriteToyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFavouriteToy(event.target.value);
+    };
+
+    if (!name && !favouriteToy) return <div>Loading...</div>;
 
     return (
         <form onSubmit={handleSubmit}>
@@ -49,38 +46,17 @@ export function UpdatePet() {
                 fullWidth
                 label="Name"
                 name="name"
-                value={pet.name}
-                onChange={handleChange}
+                value={name}
+                onChange={handleNameChange}
             />
             <TextField
                 margin="normal"
                 fullWidth
-                label="Age"
-                name="age"
-                type="number"
-                value={String(pet.age)}
-                onChange={handleChange}
+                label="Favourite Toy"
+                name="favouriteToy"
+                value={favouriteToy}
+                onChange={handleFavouriteToyChange}
             />
-            <TextField
-                margin="normal"
-                fullWidth
-                label="Favorite Toy"
-                name="favoriteToy"
-                value={pet.favoriteToy}
-                onChange={handleChange}
-            />
-            <FormControl fullWidth margin="normal">
-                <InputLabel>Category</InputLabel>
-                <Select
-                    name="category"
-                    value={pet.category}
-                    label="Category"
-                    onChange={handleSelectChange}
-                >
-                    <MenuItem value="cat">Cat</MenuItem>
-                    <MenuItem value="dog">Dog</MenuItem>
-                </Select>
-            </FormControl>
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
                 Update Pet
             </Button>

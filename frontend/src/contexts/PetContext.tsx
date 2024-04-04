@@ -4,7 +4,7 @@ import { PetType } from "../types/PetType";
 import baseUrl from "../consts";
 
 export const PetContext = createContext<PetContextType | undefined>(undefined);
-const petUrl = `${baseUrl}/pets`;
+const petUrl = `${baseUrl}/PetItems`;
 
 export function usePets() {
   const context = useContext(PetContext);
@@ -20,7 +20,7 @@ export interface PetProviderProps {
 
 export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
   const [pets, setPets] = useState<PetType[]>([]);
-
+  console.log(petUrl);
   const fetchPets = async () => {
     try {
       const response = await fetch(petUrl);
@@ -28,6 +28,7 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
         throw new Error("Could not fetch pets");
       }
       const data = await response.json() as PetType[];
+      console.log(data);
       setPets(data);
     }
     catch (error: unknown) {
@@ -41,9 +42,13 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
 
   const addPet = async (pet: PetType) => {
     try {
+      console.log(JSON.stringify(pet));
       const response = await fetch(petUrl, {
         method: 'POST',
-        body: JSON.stringify(pet)
+        body: JSON.stringify(pet), 
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
       if (!response.ok) {
         throw new Error('could not add pet');
@@ -69,10 +74,14 @@ export const PetProvider: React.FC<PetProviderProps> = ({ children }) => {
     }
   }
 
-  const updateOnePet = async (pet: PetType) => {
+  const updateOnePet = async (pet: PetType, id: string) => {
+    console.log(JSON.stringify(pet));
     try {
-      const response = await fetch(`${petUrl}/${pet.id}`, {
+      const response = await fetch(`${petUrl}/${id}`, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(pet)
       })
       if (!response.ok) {
