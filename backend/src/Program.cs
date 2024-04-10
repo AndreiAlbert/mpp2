@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using src.Models;
+using src.DataGenerators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,12 +15,26 @@ builder.Services.AddDbContext<PetContext>(opt =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("http://localhost:5174")
+        builder => builder.WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
+
+
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+var context = scope.ServiceProvider.GetRequiredService<PetContext>();
+var petItems = PetItemGenerator.GeneratePetItems(10);
+
+foreach (var petItem in petItems)
+{
+    context.PetItem.Add(petItem);
+}
+
+// Save changes to the database
+context.SaveChanges();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -38,3 +53,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+
